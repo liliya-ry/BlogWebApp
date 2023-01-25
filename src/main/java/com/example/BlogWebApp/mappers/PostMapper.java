@@ -1,12 +1,10 @@
 package com.example.BlogWebApp.mappers;
 
 import com.example.BlogWebApp.entities.Post;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
+import org.apache.ibatis.annotations.*;
 import java.util.List;
 
-@Repository
+@Mapper
 public interface PostMapper {
     Post getPostById(@Param("id") Integer id);
     List<Post> getAllPosts();

@@ -1,10 +1,9 @@
 package com.example.BlogWebApp.controllers;
 
 import com.example.BlogWebApp.entities.Comment;
-import com.example.BlogWebApp.services.CommentService;
+import com.example.BlogWebApp.mappers.CommentMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,13 +12,10 @@ import java.util.List;
 @RequestMapping({"/blogApp/comments"})
 public class CommentController {
     @Autowired
-    CommentService commentService;
+    CommentMapper commentMapper;
 
     @GetMapping
-    public List<Comment> getAllCommentsByPostId(@RequestParam Integer postId, Model model) {
-        if (postId == null) {
-            postId = (Integer) model.getAttribute("postId");
-        }
-        return commentService.getCommentsByPostId(postId);
+    public List<Comment> getAllCommentsByPostId(@RequestParam Integer postId) {
+        return commentMapper.getCommentsByPostId(postId);
     }
 }
