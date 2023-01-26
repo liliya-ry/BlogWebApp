@@ -1,9 +1,9 @@
 package com.example.BlogWebApp.exceptions;
 
-public class PostNotFoundException extends RuntimeException {
+public class NotFoundException extends RuntimeException {
     private final String message;
 
-    public PostNotFoundException(String jsonMessage) {
+    public NotFoundException(String jsonMessage) {
         message = jsonMessage;
     }
 
