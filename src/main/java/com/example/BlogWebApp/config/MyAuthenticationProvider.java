@@ -26,7 +26,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         if (!encodedPassword.equals(user.password))
             throw new BadCredentialsException("Invalid password");
 
-        return new UsernamePasswordAuthenticationToken(username, password);
+        return new UsernamePasswordAuthenticationToken(username, password, authentication.getAuthorities());
     }
 
     @Override
