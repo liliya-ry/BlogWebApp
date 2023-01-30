@@ -2,11 +2,10 @@ package com.example.BlogWebApp;
 
 import com.example.BlogWebApp.auth.AuthInterceptor;
 import com.example.BlogWebApp.logging.LoggingInterceptor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+import org.springframework.web.servlet.config.annotation.*;
 @Configuration
 public class Config implements WebMvcConfigurer {
     @Autowired

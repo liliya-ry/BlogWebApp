@@ -5,9 +5,6 @@ import com.example.BlogWebApp.mappers.UserMapper;
 import com.example.BlogWebApp.utility.PasswordEncryptor;
 
 import jakarta.servlet.http.*;
-import org.apache.juli.logging.LogFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
