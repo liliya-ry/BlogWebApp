@@ -12,6 +12,7 @@
         <result property='firstName' column='first_name'/>
         <result property='lastName' column='last_name'/>
         <result property='salt' column='salt'/>
+        <result property='role' column='role'/>
     </resultMap>
 
     <select id='getUser' resultMap='UserResult'>
@@ -25,7 +26,8 @@
             email,
             first_name,
             last_name,
-            salt
+            salt,
+            role
         )
         VALUES(
             #{username},
@@ -33,7 +35,8 @@
             #{email},
             #{firstName},
             #{lastName},
-            #{salt}
+            #{salt},
+            #{role}
         )
     </insert>
 

@@ -13,17 +13,20 @@ public class User {
     public String firstName;
     public String lastName;
     public int salt;
+    public String role;
 
     public User(@JsonProperty("username") String username,
                 @JsonProperty("password") String password,
                 @JsonProperty("email") String email,
                 @JsonProperty("firstName") String firstName,
-                @JsonProperty("lastName") String lastName) {
+                @JsonProperty("lastName") String lastName,
+                @JsonProperty("role") String role) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.role = role;
     }
 
     public int generateSalt() {
