@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.Base64;
+
 @Component
 public class LoggingInterceptor implements HandlerInterceptor {
     private static final Logger LOGGER = LogManager.getLogger(LoggingInterceptor.class);
@@ -27,10 +29,8 @@ public class LoggingInterceptor implements HandlerInterceptor {
         String httpMethod = request.getMethod();
         String uri = request.getRequestURI();
 
-        String authHeader = request.getHeader("Authorization");
-        String userToken = authHeader.split(" ")[1];
-
-        String logMsg = String.format("UserToken: %s, Method: %s, URI: %s, Status: %s, Execution Time: %s ms", userToken, httpMethod, uri, status, execTime);
+        String user = (String) request.getAttribute("user");
+        String logMsg = String.format("User: %s, Method: %s, URI: %s, Status: %s, Execution Time: %s ms", user, httpMethod, uri, status, execTime);
 
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         LoggingInfo loggingInfoAnn = handlerMethod.getMethodAnnotation(LoggingInfo.class);

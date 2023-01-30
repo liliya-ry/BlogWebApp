@@ -2,6 +2,7 @@ package com.example.BlogWebApp.controllers;
 
 import static com.example.BlogWebApp.entities.ErrorResponse.NO_POST_MESSAGE;
 
+import com.example.BlogWebApp.auth.Role;
 import com.example.BlogWebApp.entities.*;
 import com.example.BlogWebApp.exceptions.NotFoundException;
 import com.example.BlogWebApp.logging.LoggingInfo;
