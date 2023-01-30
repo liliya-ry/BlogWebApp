@@ -1,5 +1,6 @@
 package com.example.BlogWebApp.auth;
 
+import com.example.BlogWebApp.utility.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

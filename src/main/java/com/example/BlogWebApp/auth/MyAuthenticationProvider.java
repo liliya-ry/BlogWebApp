@@ -30,10 +30,14 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         if (!encodedPassword.equals(user.password))
             throw new BadCredentialsException("Invalid password");
 
+        return new UsernamePasswordAuthenticationToken(username, password, getGrantedAuthorities());
+    }
+
+    private List<GrantedAuthority> getGrantedAuthorities() {
         List<GrantedAuthority> authorityList = new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority("ROLE_READ"));
         authorityList.add(new SimpleGrantedAuthority("ROLE_WRITE"));
-        return new UsernamePasswordAuthenticationToken(username, password, authorityList);
+        return authorityList;
     }
 
     @Override

@@ -4,6 +4,7 @@ import static com.example.BlogWebApp.entities.ErrorResponse.NO_POST_MESSAGE;
 
 import com.example.BlogWebApp.entities.*;
 import com.example.BlogWebApp.exceptions.NotFoundException;
+import com.example.BlogWebApp.logging.LoggingInfo;
 import com.example.BlogWebApp.mappers.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,6 +24,7 @@ public class PostControllerImpl implements PostController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @LoggingInfo("Get all posts - %s")
     public List<Post> getAllPosts() {
         return postMapper.getAllPosts();
     }
