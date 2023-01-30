@@ -1,12 +1,13 @@
-package com.example.BlogWebApp.config;
+package com.example.BlogWebApp.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+@Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     @Autowired
@@ -14,12 +15,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .authorizeHttpRequests(authCustomizer -> authCustomizer
-                        .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
-                        .requestMatchers(HttpMethod.POST).authenticated()
-                        .requestMatchers("/**").authenticated())
+        http.csrf().disable();
+        http
+                .authorizeHttpRequests()
+                .requestMatchers("/users/register").permitAll()
+                .requestMatchers("/posts").hasAuthority("ROLE_WRITE")
+                .anyRequest().authenticated()
+                .and()
                 .authenticationProvider(authProvider)
-                .build();
+                .httpBasic();
+        return http.build();
     }
 }

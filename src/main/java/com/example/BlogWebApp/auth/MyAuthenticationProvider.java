@@ -1,4 +1,4 @@
-package com.example.BlogWebApp.config;
+package com.example.BlogWebApp.auth;
 
 import com.example.BlogWebApp.entities.User;
 import com.example.BlogWebApp.mappers.UserMapper;
@@ -6,7 +6,11 @@ import com.example.BlogWebApp.utility.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class MyAuthenticationProvider implements AuthenticationProvider {
@@ -26,7 +30,10 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         if (!encodedPassword.equals(user.password))
             throw new BadCredentialsException("Invalid password");
 
-        return new UsernamePasswordAuthenticationToken(username, password, authentication.getAuthorities());
+        List<GrantedAuthority> authorityList = new ArrayList<>();
+        authorityList.add(new SimpleGrantedAuthority("ROLE_READ"));
+        authorityList.add(new SimpleGrantedAuthority("ROLE_WRITE"));
+        return new UsernamePasswordAuthenticationToken(username, password, authorityList);
     }
 
     @Override
