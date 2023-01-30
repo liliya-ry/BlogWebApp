@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+
 @Component
 public class LoggingInterceptor implements HandlerInterceptor {
     private static final Logger LOGGER = LogManager.getLogger(LoggingInterceptor.class);

@@ -19,7 +19,11 @@
         SELECT * FROM USERS WHERE USERNAME = #{username}
     </select>
 
-    <insert id='insertUser' parameterType='User' useGeneratedKeys='true' keyProperty='id'>
+    <select id='getAllUsers' resultMap='UserResult'>
+        SELECT * FROM USERS
+    </select>
+
+    <insert id='insertUser' parameterType='User' useGeneratedKeys='true' keyProperty='username'>
         INSERT INTO USERS(
             username,
             password,
@@ -40,4 +44,19 @@
         )
     </insert>
 
+    <update id='updateUser' parameterType='User' useGeneratedKeys='true' keyProperty='username'>
+        UPDATE USERS
+        SET
+        PASSWORD = #{password},
+        EMAIL = #{email},
+        FIRST_NAME = #{firstName},
+        LAST_NAME = #{lastName},
+        SALT = #{salt},
+        ROLE = #{role}
+        WHERE USERNAME = #{username}
+    </update>
+
+    <delete id='deleteUser' parameterType='String'>
+        DELETE FROM USERS WHERE USERNAME = #{username}
+    </delete>
 </mapper>

@@ -6,6 +6,7 @@ import java.util.Random;
 
 public class User {
     private static final Random RANDOM = new Random();
+
     public int id;
     public String username;
     public String password;
@@ -15,13 +16,11 @@ public class User {
     public int salt;
     public String role;
 
-    public User(@JsonProperty("username") String username,
-                @JsonProperty("password") String password,
+    public User(@JsonProperty("password") String password,
                 @JsonProperty("email") String email,
                 @JsonProperty("firstName") String firstName,
                 @JsonProperty("lastName") String lastName,
                 @JsonProperty("role") String role) {
-        this.username = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;

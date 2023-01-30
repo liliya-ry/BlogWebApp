@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.example.BlogWebApp.entities.ErrorResponse.NO_USER_MESSAGE;
 
 @RestController
@@ -23,21 +25,44 @@ public class UserControllerImpl implements UserController {
     private ObjectMapper objectMapper;
 
     @Role("admin")
-    public User registerUser(User user) {
+    public List<User> getAllUsers() {
+        return userMapper.getAllUsers();
+    }
+
+    @Role("admin")
+    public User getUserByUsername(String username) throws JsonProcessingException {
+        User user = userMapper.getUser(username);
+        if (user == null)
+            throwUserException(username, "");
+        return user;
+    }
+
+    @Role("admin")
+    public User addUser(User user) {
         user.password = PasswordEncryptor.encryptPassword(user.password + user.generateSalt());
         userMapper.insertUser(user);
         return user;
     }
 
-    public User getUserByUsername(String username) throws JsonProcessingException {
-        User user = userMapper.getUser(username);
-        if (user == null)
-            throwUserException(username);
+    @Role("admin")
+    public Object updateUser(User user, String username) throws JsonProcessingException {
+        user.username = username;
+        int affectedRows = userMapper.updateUser(user);
+        if (affectedRows != 1)
+            throwUserException(username, " was updated");
         return user;
     }
 
-    private void throwUserException(String username) throws JsonProcessingException {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), NO_USER_MESSAGE + username);
+    @Role("admin")
+    public Object deleteUser(String username) throws JsonProcessingException {
+        int affectedRows = userMapper.deleteUser(username);
+        if (affectedRows != 1)
+            throwUserException(username, " was deleted");
+        return username;
+    }
+
+    private void throwUserException(String username, String msg) throws JsonProcessingException {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), NO_USER_MESSAGE + username + msg);
         String jsonError = objectMapper.writeValueAsString(errorResponse);
         throw new NotFoundException(jsonError);
     }
