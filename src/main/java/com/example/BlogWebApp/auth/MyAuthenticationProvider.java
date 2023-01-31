@@ -2,7 +2,6 @@ package com.example.BlogWebApp.auth;
 
 import com.example.BlogWebApp.entities.User;
 import com.example.BlogWebApp.mappers.UserMapper;
-import com.example.BlogWebApp.utility.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;

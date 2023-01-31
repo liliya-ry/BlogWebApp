@@ -1,4 +1,4 @@
-package com.example.BlogWebApp.utility;
+package com.example.BlogWebApp.auth;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

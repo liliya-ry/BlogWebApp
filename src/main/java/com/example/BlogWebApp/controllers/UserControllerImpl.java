@@ -3,13 +3,12 @@ package com.example.BlogWebApp.controllers;
 import com.example.BlogWebApp.entities.*;
 import com.example.BlogWebApp.exceptions.NotFoundException;
 import com.example.BlogWebApp.mappers.UserMapper;
-import com.example.BlogWebApp.utility.PasswordEncryptor;
+import com.example.BlogWebApp.auth.PasswordEncryptor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.BlogWebApp.entities.ErrorResponse.NO_USER_MESSAGE;
