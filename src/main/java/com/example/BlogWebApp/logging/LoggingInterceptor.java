@@ -28,6 +28,9 @@ public class LoggingInterceptor implements HandlerInterceptor {
         String uri = request.getRequestURI();
 
         String authHeader = request.getHeader("Authorization");
+        if (authHeader == null)
+            return;
+
         String userToken = authHeader.split(" ")[1];
 
         String logMsg = String.format("UserToken: %s, Method: %s, URI: %s, Status: %s, Execution Time: %s ms", userToken, httpMethod, uri, status, execTime);

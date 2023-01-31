@@ -11,7 +11,6 @@
         <result property='email' column='email'/>
         <result property='firstName' column='first_name'/>
         <result property='lastName' column='last_name'/>
-        <result property='salt' column='salt'/>
     </resultMap>
 
     <select id='getUser' resultMap='UserResult'>
@@ -24,16 +23,14 @@
             password,
             email,
             first_name,
-            last_name,
-            salt
+            last_name
         )
         VALUES(
             #{username},
             #{password},
             #{email},
             #{firstName},
-            #{lastName},
-            #{salt}
+            #{lastName}
         )
     </insert>
 

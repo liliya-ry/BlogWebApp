@@ -3,7 +3,6 @@ package com.example.BlogWebApp.controllers;
 import com.example.BlogWebApp.entities.*;
 import com.example.BlogWebApp.exceptions.NotFoundException;
 import com.example.BlogWebApp.mappers.UserMapper;
-import com.example.BlogWebApp.utility.PasswordEncryptor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,9 +20,11 @@ public class UserControllerImpl implements UserController {
     private UserMapper userMapper;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    PasswordEncoder encryptor;
 
     public User registerUser(User user) {
-        user.password = PasswordEncryptor.encryptPassword(user.password + user.generateSalt());
+        user.password = encryptor.encode(user.password);
         userMapper.insertUser(user);
         return user;
     }
