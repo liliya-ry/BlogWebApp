@@ -18,7 +18,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     UserMapper userMapper;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String[] authPair = getAuthPair(request);
         if (authPair == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

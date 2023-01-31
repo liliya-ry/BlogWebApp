@@ -4,7 +4,6 @@ import static com.example.BlogWebApp.entities.ErrorResponse.NO_POST_MESSAGE;
 
 import com.example.BlogWebApp.entities.*;
 import com.example.BlogWebApp.exceptions.NotFoundException;
-import com.example.BlogWebApp.logging.LoggingInfo;
 import com.example.BlogWebApp.mappers.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/posts")
 public class PostControllerImpl implements PostController {
     @Autowired
     private PostMapper postMapper;

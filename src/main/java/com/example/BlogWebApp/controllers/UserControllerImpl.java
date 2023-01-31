@@ -1,6 +1,5 @@
 package com.example.BlogWebApp.controllers;
 
-import com.example.BlogWebApp.auth.Role;
 import com.example.BlogWebApp.entities.*;
 import com.example.BlogWebApp.exceptions.NotFoundException;
 import com.example.BlogWebApp.mappers.UserMapper;
@@ -17,7 +16,6 @@ import java.util.List;
 import static com.example.BlogWebApp.entities.ErrorResponse.NO_USER_MESSAGE;
 
 @RestController
-@RequestMapping("/users")
 public class UserControllerImpl implements UserController {
     @Autowired
     private UserMapper userMapper;

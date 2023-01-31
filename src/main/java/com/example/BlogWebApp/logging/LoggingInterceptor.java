@@ -1,7 +1,8 @@
 package com.example.BlogWebApp.logging;
 
 import jakarta.servlet.http.*;
-import org.apache.logging.log4j.*;
+import org.slf4j.*;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -9,7 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 public class LoggingInterceptor implements HandlerInterceptor {
-    private static final Logger LOGGER = LogManager.getLogger(LoggingInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -20,6 +21,9 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        if (ex != null)
+            LOGGER.error(ex.toString());
+
         long endTime = System.currentTimeMillis();
         long startTime = (long) request.getAttribute("startTime");
         long execTime = endTime - startTime;
