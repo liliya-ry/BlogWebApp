@@ -17,8 +17,7 @@ public interface UserController {
     @GetMapping("/{username}")
     User getUserByUsername(@PathVariable String username) throws JsonProcessingException;
 
-    @Role("admin")
-    @PostMapping
+    @PostMapping("/register")
     User addUser(@RequestBody User user);
 
     @Role("admin")
