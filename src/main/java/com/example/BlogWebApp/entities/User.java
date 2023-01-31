@@ -16,11 +16,13 @@ public class User {
     public int salt;
     public String role;
 
-    public User(@JsonProperty("password") String password,
+    public User(@JsonProperty("username") String username,
+                @JsonProperty("password") String password,
                 @JsonProperty("email") String email,
                 @JsonProperty("firstName") String firstName,
                 @JsonProperty("lastName") String lastName,
                 @JsonProperty("role") String role) {
+        this.username = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;
