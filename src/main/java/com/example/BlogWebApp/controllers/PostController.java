@@ -1,6 +1,7 @@
 package com.example.BlogWebApp.controllers;
 
 import com.example.BlogWebApp.entities.*;
+import com.example.BlogWebApp.logging.LoggingInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @RequestMapping("/posts")
 public interface PostController {
+    @LoggingInfo("Get all posts - %s")
     @GetMapping
     List<Post> getAllPosts();
 

@@ -24,12 +24,10 @@ public class UserControllerImpl implements UserController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Role("admin")
     public List<User> getAllUsers() {
         return userMapper.getAllUsers();
     }
 
-    @Role("admin")
     public User getUserByUsername(String username) throws JsonProcessingException {
         User user = userMapper.getUser(username);
         if (user == null)
@@ -37,14 +35,12 @@ public class UserControllerImpl implements UserController {
         return user;
     }
 
-    @Role("admin")
     public User addUser(User user) {
         user.password = PasswordEncryptor.encryptPassword(user.password + user.generateSalt());
         userMapper.insertUser(user);
         return user;
     }
 
-    @Role("admin")
     public Object updateUser(User user, String username) throws JsonProcessingException {
         user.username = username;
         int affectedRows = userMapper.updateUser(user);
@@ -53,7 +49,6 @@ public class UserControllerImpl implements UserController {
         return user;
     }
 
-    @Role("admin")
     public Object deleteUser(String username) throws JsonProcessingException {
         int affectedRows = userMapper.deleteUser(username);
         if (affectedRows != 1)

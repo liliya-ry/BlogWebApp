@@ -20,6 +20,11 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String[] authPair = getAuthPair(request);
+        if (authPair == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return false;
+        }
+
         String username = authPair[0];
         String password = authPair[1];
         User user = userMapper.getUser(username);
@@ -61,6 +66,9 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     private String[] getAuthPair(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
+        if (authHeader == null)
+            return null;
+
         String encodedStr = authHeader.split(" ")[1];
         byte[] decodedBytes = Base64.getDecoder().decode(encodedStr);
         String authStr = new String(decodedBytes);

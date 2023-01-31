@@ -24,7 +24,6 @@ public class PostControllerImpl implements PostController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @LoggingInfo("Get all posts - %s")
     public List<Post> getAllPosts() {
         return postMapper.getAllPosts();
     }
