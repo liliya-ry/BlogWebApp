@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.BlogWebApp.entities.*;
 import com.example.BlogWebApp.mappers.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -44,7 +43,7 @@ class AuthTest {
     @DisplayName("Authentication - Missing Authorization header")
     void authentication1() throws Exception {
         mockMvc
-                .perform(get("/post"))
+                .perform(get("/posts"))
                 .andExpect(status().isUnauthorized());
     }
 

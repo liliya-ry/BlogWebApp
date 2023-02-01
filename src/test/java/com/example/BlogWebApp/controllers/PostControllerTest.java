@@ -4,36 +4,58 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.BlogWebApp.entities.*;
 import com.example.BlogWebApp.exceptions.NotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 import java.util.*;
 
 @SpringBootTest
-@Import({PostControllerTestConfig.class, PostControllerImpl.class})
+@Import(PostControllerTestConfig.class)
 class PostControllerTest {
     @Autowired
-    private PostControllerImpl postController;
+    private PostController postController;
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
-    @Test
-    void getAllPosts() {
-        Post post1 = new Post(2, 1, "some title 1", "some body 1");
-        Post post2 = new Post(3, 2, "some title 2", "some body 2");
-        List<Post> expectedResultList = List.of(post1, post2);
-        List<Post> actualResultList = postController.getAllPosts();
-        assertThat(actualResultList, is(expectedResultList));
+    @BeforeEach
+    void setUp() {
+        this.objectMapper = new ObjectMapper();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(postController).build();
     }
 
     @Test
-    void getExistingPost() throws JsonProcessingException {
+    void getAllPosts() throws Exception {
+        Post post1 = new Post(4, 1, "st", "sb");
+        Post post2 = new Post(3, 2, "some title 2", "some body 2");
+        String expectedJson1 = objectMapper.writeValueAsString(post1);
+        String expectedJson2 = objectMapper.writeValueAsString(post2);
+        mockMvc
+                .perform(get("/posts"))
+                .andExpect(status().isOk())
+                .andExpect(result -> assertThat(result.getResponse().getContentAsString(), containsString(expectedJson1)))
+                .andExpect(result -> assertThat(result.getResponse().getContentAsString(), containsString(expectedJson2)));
+    }
+
+    @Test
+    void getExistingPost() throws Exception {
         Post expectedPost = new Post(2, 1, "some title 1", "some body 1");
-        Post actualPost = (Post) postController.getPostById(2);
-        assertThat(expectedPost, is(actualPost));
+        String expectedJson = objectMapper.writeValueAsString(expectedPost);
+        mockMvc
+                .perform(get("/posts/2"))
+                .andExpect(status().isOk())
+                .andExpect(result -> assertThat(result.getResponse().getContentAsString(), is(expectedJson)));
     }
 
     @Test
@@ -42,19 +64,27 @@ class PostControllerTest {
     }
 
     @Test
-    void addPost() throws JsonProcessingException {
-        Post post = new Post(1, 1, "st", "sb");
-        postController.createPost(post);
-        assertThat(postController.getAllPosts(), hasSize(3));
-        assertThat(postController.getPostById(1), is(post));
+    void addPost() throws Exception {
+        Post post = new Post(4, 1, "st", "sb");
+        String postJson = objectMapper.writeValueAsString(post);
+        mockMvc
+                .perform(post("/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(postJson))
+                .andExpect(status().isOk())
+                .andExpect(result -> assertThat(result.getResponse().getContentAsString(), is(postJson)));
     }
 
     @Test
-    void updateExistingPost() throws JsonProcessingException {
-        Post post = new Post(2, 1, "new title", "sb");
-        postController.updatePost(post, 2);
-        Post updatedPost = (Post) postController.getPostById(2);
-        assertThat(updatedPost.title, is("new title"));
+    void updateExistingPost() throws Exception {
+        Post post = new Post(3, 1, "new title", "sb");
+        String postJson = objectMapper.writeValueAsString(post);
+        mockMvc
+                .perform(put("/posts/3")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(postJson))
+                .andExpect(status().isOk())
+                .andExpect(result -> assertThat(result.getResponse().getContentAsString(), is(postJson)));
     }
 
     @Test
@@ -64,16 +94,15 @@ class PostControllerTest {
     }
 
     @Test
-    void deleteExistingPost() {
-        List<Post> postList = postController.getAllPosts();
-        System.out.println(postList.size());
-        assertDoesNotThrow(() -> postController.deletePost(2));
-        assertThrows(NotFoundException.class, () -> postController.getPostById(2));
-        assertThat(postController.getAllPosts(), hasSize(postList.size()));
+    void deleteExistingPost() throws Exception {
+        mockMvc
+                .perform(delete("/posts/2"))
+                .andExpect(status().isOk())
+                .andExpect(result -> assertThat(result.getResponse().getContentAsString(), is("2")));
     }
 
     @Test
     void deleteNonExistingPost() {
-        assertThrows(NotFoundException.class, () -> postController.deletePost(4));
+        assertThrows(NotFoundException.class, () -> postController.deletePost(5));
     }
 }
