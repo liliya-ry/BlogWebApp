@@ -1,113 +1,79 @@
 package com.example.BlogWebApp.controllers;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static org.hamcrest.Matchers.containsString;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.http.MediaType.TEXT_PLAIN;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.example.BlogWebApp.auth.PasswordEncryptor;
 import com.example.BlogWebApp.entities.*;
-import com.example.BlogWebApp.mappers.*;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.BlogWebApp.exceptions.NotFoundException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.web.servlet.MockMvc;
 import java.util.*;
 
 @SpringBootTest
-@Import(PostControllerTestConfig.class)
-@AutoConfigureMockMvc
+@Import({PostControllerTestConfig.class, PostControllerImpl.class})
 class PostControllerTest {
-    private String encodedCredentials;
     @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private PostMapper postMapper;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @MockBean
-    private UserMapper userMapper;
-
-    @BeforeEach
-    void setUp() {
-        String credentials = "maria:5678";
-        byte[] encodedBytes = Base64.getEncoder().encode(credentials.getBytes());
-        encodedCredentials = new String(encodedBytes);
-
-        User user = new User("maria", "5678", "maria@abv.bg", "maria", "petrova", "user");
-        user.password = PasswordEncryptor.encryptPassword(user.password + user.generateSalt());
-        when(userMapper.getUser(user.username)).thenReturn(user);
-    }
+    private PostControllerImpl postController;
 
     @Test
-    void getAllPosts() throws Exception {
-        Post post1 = new Post(1, "some title 1", "some body 1");
-        Post post2 = new Post(2, "some title 2", "some body 2");
+    void getAllPosts() {
+        Post post1 = new Post(2, 1, "some title 1", "some body 1");
+        Post post2 = new Post(3, 2, "some title 2", "some body 2");
         List<Post> expectedResultList = List.of(post1, post2);
-        String expectedResultJson = objectMapper.writeValueAsString(expectedResultList);
-        mockMvc.perform(get("/posts")
-                .header("Authorization", "Basic " + encodedCredentials))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(content().string(expectedResultJson));
+        List<Post> actualResultList = postController.getAllPosts();
+        assertThat(actualResultList, is(expectedResultList));
     }
 
     @Test
-    void getExistingPost() throws Exception {
-        Post post = new Post(3, 2, "some title 2", "some body 2");
-        String expectedResultJson = objectMapper.writeValueAsString(post);
-        mockMvc.perform(get("/posts/3")
-                        .header("Authorization", "Basic " + encodedCredentials))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(content().string(expectedResultJson));
+    void getExistingPost() throws JsonProcessingException {
+        Post expectedPost = new Post(2, 1, "some title 1", "some body 1");
+        Post actualPost = (Post) postController.getPostById(2);
+        assertThat(expectedPost, is(actualPost));
     }
 
     @Test
-    void getNonExistingPost() throws Exception {
-        ErrorResponse errorResponse = new ErrorResponse(404, "No post with id 1");
-        String expectedResultJson = objectMapper.writeValueAsString(errorResponse);
-        mockMvc.perform(get("/posts/1")
-                        .header("Authorization", "Basic " + encodedCredentials))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(expectedResultJson));
+    void getNonExistingPost() {
+        assertThrows(NotFoundException.class, () -> postController.getPostById(1));
     }
 
     @Test
-    void responseContainsErrorCode() throws Exception {
-        mockMvc.perform(get("/posts/1")
-                        .header("Authorization", "Basic " + encodedCredentials))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString(String.valueOf(SC_NOT_FOUND))));
+    void addPost() throws JsonProcessingException {
+        Post post = new Post(1, 1, "st", "sb");
+        postController.createPost(post);
+        assertThat(postController.getAllPosts(), hasSize(3));
+        assertThat(postController.getPostById(1), is(post));
     }
 
     @Test
-    void responseContainsId() throws Exception {
-        String id = "1";
-        mockMvc.perform(get("/posts/" + id)
-                        .header("Authorization", "Basic " + encodedCredentials))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString(id)));
+    void updateExistingPost() throws JsonProcessingException {
+        Post post = new Post(2, 1, "new title", "sb");
+        postController.updatePost(post, 2);
+        Post updatedPost = (Post) postController.getPostById(2);
+        assertThat(updatedPost.title, is("new title"));
     }
 
     @Test
-    void addPost() throws Exception {
-        Post post = new Post(1, "some title 1", "some body 1");
-        String requestJson = objectMapper.writeValueAsString(post);
-        mockMvc.perform(post("/posts")
-                        .header("Authorization", "Basic " + encodedCredentials)
-                        .contentType(APPLICATION_JSON)
-                        .content(requestJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(content().string(requestJson));
+    void updateNonExistingPost() {
+        Post post = new Post(1, 1, "new title", "sb");
+        assertThrows(NotFoundException.class, () -> postController.updatePost(post, 1));
+    }
+
+    @Test
+    void deleteExistingPost() {
+        List<Post> postList = postController.getAllPosts();
+        System.out.println(postList.size());
+        assertDoesNotThrow(() -> postController.deletePost(2));
+        assertThrows(NotFoundException.class, () -> postController.getPostById(2));
+        assertThat(postController.getAllPosts(), hasSize(postList.size()));
+    }
+
+    @Test
+    void deleteNonExistingPost() {
+        assertThrows(NotFoundException.class, () -> postController.deletePost(4));
     }
 }

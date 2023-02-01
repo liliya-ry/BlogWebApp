@@ -20,4 +20,13 @@ public class Post {
         this.title = title;
         this.body = body;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Post post = (Post)obj;
+        return this.id == post.id &&
+                this.userId == post.userId &&
+                this.title.equals(post.title) &&
+                this.body.equals(post.body);
+    }
 }
